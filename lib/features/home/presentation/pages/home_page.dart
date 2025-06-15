@@ -1,15 +1,13 @@
+import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auto_size_text/flutter_auto_size_text.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:country_flags/country_flags.dart';
+
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/responsive_utils.dart';
-import '../widgets/action_buttons_section.dart';
 import '../widgets/common_image_logo.dart';
-import '../widgets/header_section.dart';
 import '../widgets/hover_expandable_navigation.dart';
-import '../widgets/recent_activity_section.dart';
 import '../widgets/stats_section.dart';
 
 class HomePage extends StatefulWidget {

@@ -1,7 +1,8 @@
-// Stats section widget for displaying profile cards
-//
-// This widget follows clean architecture principles by separating
-// concerns and delegating specific responsibilities to focused components.
+/// Stats section widget for displaying profile cards
+///
+/// This widget follows clean architecture principles by separating
+/// concerns and delegating specific responsibilities to focused components.
+library;
 
 import 'package:flutter/material.dart';
 
