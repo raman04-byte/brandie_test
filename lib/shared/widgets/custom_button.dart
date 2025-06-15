@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_auto_size_text/flutter_auto_size_text.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -70,11 +71,12 @@ class CustomButton extends StatelessWidget {
                     Icon(icon, size: 20),
                     const SizedBox(width: AppConstants.smallPadding),
                   ],
-                  Text(
+                  AutoSizeText(
                     text,
                     style: AppTextStyles.buttonMedium.copyWith(
                       color: textColor ?? AppColors.white,
                     ),
+                    maxLines: 1,
                   ),
                 ],
               ),
@@ -118,11 +120,12 @@ class CustomButton extends StatelessWidget {
                     Icon(icon, size: 20),
                     const SizedBox(width: AppConstants.smallPadding),
                   ],
-                  Text(
+                  AutoSizeText(
                     text,
                     style: AppTextStyles.buttonMedium.copyWith(
                       color: backgroundColor ?? AppColors.primary,
                     ),
+                    maxLines: 1,  
                   ),
                 ],
               ),

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/theme/app_colors.dart';
+
 import '../../../../core/constants/app_constants.dart';
-import '../../../../shared/widgets/custom_card.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/common_widgets.dart';
+import '../../../../shared/widgets/custom_card.dart';
 
 class RecentActivitySection extends StatelessWidget {
   final bool isLoading;
