@@ -1,7 +1,3 @@
-/// Profile card widget for displaying individual profile information
-///
-/// This widget follows the single responsibility principle by focusing
-/// solely on rendering a profile card and handling its interactions.
 library;
 
 import 'package:flutter/material.dart';
@@ -10,22 +6,23 @@ import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../core/constants/assets.dart';
 import '../../../../core/models/profile_models.dart';
+import '../../../../core/models/profile_status_manager.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/custom_card.dart';
 import 'profile_modal.dart';
 
-/// A card widget that displays profile information with hover effects
-/// and action buttons that appear on hover
 class ProfileCard extends StatefulWidget {
   final ProfileData profile;
   final List<ProfileData> allProfiles;
   final int currentIndex;
+  final VoidCallback? onStatusChanged;
 
   const ProfileCard({
     super.key,
     required this.profile,
     required this.allProfiles,
     required this.currentIndex,
+    this.onStatusChanged,
   });
 
   @override
@@ -34,6 +31,26 @@ class ProfileCard extends StatefulWidget {
 
 class _ProfileCardState extends State<ProfileCard> {
   bool _isHovered = false;
+  final ProfileStatusManager _statusManager = ProfileStatusManager();
+
+  @override
+  void initState() {
+    super.initState();
+    _statusManager.addListener(_onStatusChanged);
+  }
+
+  @override
+  void dispose() {
+    _statusManager.removeListener(_onStatusChanged);
+    super.dispose();
+  }
+
+  void _onStatusChanged() {
+    if (mounted) {
+      setState(() {});
+      widget.onStatusChanged?.call();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,8 +143,11 @@ class _ProfileCardState extends State<ProfileCard> {
     );
   }
 
-  /// Builds the platform section with badge and action buttons
+  /// Builds the platform section with badge and action buttons or status
   Widget _buildPlatformSection() {
+    final currentStatus = _statusManager.getProfileStatus(widget.profile.id);
+    final isProcessed = _statusManager.isProfileProcessed(widget.profile.id);
+
     return Row(
       children: [
         Container(
@@ -146,7 +166,7 @@ class _ProfileCardState extends State<ProfileCard> {
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                  color: AppColors.black87,
                 ),
                 maxLines: 1,
               ),
@@ -154,27 +174,60 @@ class _ProfileCardState extends State<ProfileCard> {
           ),
         ),
         const Spacer(),
-        AnimatedOpacity(
-          opacity: _isHovered ? 1.0 : 0.0,
-          duration: const Duration(milliseconds: 200),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildActionButton(
-                icon: Icons.close,
-                color: const Color(0xFFDD2828),
-                onPressed: () => _handleDecline(),
-              ),
-              const SizedBox(width: 8),
-              _buildActionButton(
-                icon: Icons.check,
-                color: const Color(0xFF3C54EF),
-                onPressed: () => _handleAccept(),
-              ),
-            ],
+        if (isProcessed)
+          _buildStatusBadge(currentStatus)
+        else
+          AnimatedOpacity(
+            opacity: _isHovered ? 1.0 : 0.0,
+            duration: const Duration(milliseconds: 200),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildActionButton(
+                  icon: Icons.close,
+                  color: const Color(0xFFDD2828),
+                  onPressed: () => _handleDecline(),
+                ),
+                const SizedBox(width: 8),
+                _buildActionButton(
+                  icon: Icons.check,
+                  color: const Color(0xFF3C54EF),
+                  onPressed: () => _handleAccept(),
+                ),
+              ],
+            ),
           ),
-        ),
       ],
+    );
+  }
+
+  /// Builds a status badge for processed profiles
+  Widget _buildStatusBadge(ProfileStatus status) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: status.color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: status.color.withValues(alpha: 0.3),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(status.icon, size: 16, color: status.color),
+          const SizedBox(width: 6),
+          Text(
+            status == ProfileStatus.approved ? 'Approved' : 'Declined',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: status.color,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -185,7 +238,7 @@ class _ProfileCardState extends State<ProfileCard> {
       style: const TextStyle(
         fontWeight: FontWeight.w600,
         fontSize: 16,
-        color: Colors.black87,
+        color: AppColors.black87,
       ),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
@@ -283,7 +336,7 @@ class _ProfileCardState extends State<ProfileCard> {
       case 'tiktok':
         return const Icon(
           HugeIcons.strokeRoundedTiktok,
-          color: Colors.black,
+          color: AppColors.black,
           size: 16,
         );
       case 'facebook':
@@ -313,7 +366,7 @@ class _ProfileCardState extends State<ProfileCard> {
           size: 16,
         );
       default:
-        return const Icon(Icons.public, color: Colors.grey, size: 16);
+        return const Icon(Icons.public, color: AppColors.grey, size: 16);
     }
   }
 
@@ -332,7 +385,7 @@ class _ProfileCardState extends State<ProfileCard> {
       ),
       child: IconButton(
         onPressed: onPressed,
-        icon: Icon(icon, color: Colors.white, size: 16),
+        icon: Icon(icon, color: AppColors.white, size: 16),
         padding: EdgeInsets.zero,
       ),
     );
@@ -372,20 +425,46 @@ class _ProfileCardState extends State<ProfileCard> {
 
   /// Handles the accept action
   void _handleAccept() {
+    _statusManager.approveProfile(widget.profile.id);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${widget.profile.name} accepted'),
-        backgroundColor: Colors.green,
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle, color: AppColors.white, size: 20),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text('${widget.profile.name} approved successfully'),
+            ),
+          ],
+        ),
+        backgroundColor: AppColors.green,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        margin: const EdgeInsets.all(16),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
 
   /// Handles the decline action
   void _handleDecline() {
+    _statusManager.declineProfile(widget.profile.id);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${widget.profile.name} declined'),
-        backgroundColor: Colors.red,
+        content: Row(
+          children: [
+            const Icon(Icons.cancel, color: AppColors.white, size: 20),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text('${widget.profile.name} declined successfully'),
+            ),
+          ],
+        ),
+        backgroundColor: AppColors.red,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        margin: const EdgeInsets.all(16),
+        duration: const Duration(seconds: 2),
       ),
     );
   }

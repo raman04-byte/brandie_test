@@ -35,25 +35,25 @@ class RecentActivitySection extends StatelessWidget {
         'title': 'Task "Design Review" completed',
         'subtitle': '2 hours ago',
         'icon': Icons.check_circle,
-        'color': Colors.green,
+        'color': AppColors.green,
       },
       {
         'title': 'New task "User Testing" created',
         'subtitle': '4 hours ago',
         'icon': Icons.add_circle,
-        'color': Colors.blue,
+        'color': AppColors.blue,
       },
       {
         'title': 'Task "Bug Fix" updated',
         'subtitle': '6 hours ago',
         'icon': Icons.edit,
-        'color': Colors.orange,
+        'color': AppColors.orange,
       },
       {
         'title': 'Project "Mobile App" milestone reached',
         'subtitle': '1 day ago',
         'icon': Icons.flag,
-        'color': Colors.purple,
+        'color': AppColors.purple,
       },
     ];
 

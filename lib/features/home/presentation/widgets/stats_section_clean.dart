@@ -1,7 +1,3 @@
-/// Stats section widget for displaying profile cards
-///
-/// This widget follows clean architecture principles by separating
-/// concerns and delegating specific responsibilities to focused components.
 library;
 
 import 'package:flutter/material.dart';
@@ -11,8 +7,6 @@ import '../../../../shared/widgets/common_widgets.dart';
 import '../../../home/data/profile_data_source.dart';
 import 'profile_card.dart';
 
-/// A section widget that displays a grid of profile cards
-/// with responsive layout and loading states
 class StatsSection extends StatelessWidget {
   final bool isLoading;
 

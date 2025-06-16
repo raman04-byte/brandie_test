@@ -27,7 +27,7 @@ class BaseModal extends StatelessWidget {
     final dialogWidth = width ?? (screenSize.width > 1200 ? 550 : 420);
 
     return Material(
-      color: Colors.transparent,
+      color: AppColors.transparent,
       child: GlassmorphismBackground(
         child: Center(
           child: GlassmorphismContainer(
@@ -38,12 +38,12 @@ class BaseModal extends StatelessWidget {
             blurSigma: 5.0,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.15),
+                color: AppColors.black.withValues(alpha: 0.15),
                 blurRadius: 30,
                 offset: const Offset(0, 10),
               ),
               BoxShadow(
-                color: Colors.white.withValues(alpha: 0.8),
+                color: AppColors.white.withValues(alpha: 0.8),
                 blurRadius: 0,
                 offset: const Offset(0, 0),
               ),
@@ -108,7 +108,7 @@ class NavigableModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
+      color: AppColors.transparent,
       child: GlassmorphismBackground(
         child: Center(
           child: Row(

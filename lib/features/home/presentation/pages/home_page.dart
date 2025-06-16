@@ -20,6 +20,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool _isLoading = false;
   int _selectedNavIndex = 0;
+  String _searchQuery = '';
+  String _sortOption = 'Date Connected';
+  bool _isAscending = true;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final List<NavItemData> navItems = const [
@@ -149,11 +152,11 @@ class _HomePageState extends State<HomePage> {
                     vertical: 10,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.white,
                     borderRadius: BorderRadius.circular(10),
                     boxShadow: [
                       const BoxShadow(
-                        color: Colors.black12,
+                        color: AppColors.black12,
                         blurRadius: 4,
                         offset: Offset(0, 2),
                       ),
@@ -226,12 +229,33 @@ class _HomePageState extends State<HomePage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       // Header Section
-                      const TopBar(),
+                      TopBar(
+                        onSearchChanged: (query) {
+                          setState(() {
+                            _searchQuery = query;
+                          });
+                        },
+                        onSortChanged: (sortOption) {
+                          setState(() {
+                            _sortOption = sortOption;
+                          });
+                        },
+                        onSortDirectionChanged: (isAscending) {
+                          setState(() {
+                            _isAscending = isAscending;
+                          });
+                        },
+                      ),
 
                       const SizedBox(height: AppConstants.largePadding),
 
                       // Stats Section
-                      StatsSection(isLoading: _isLoading),
+                      StatsSection(
+                        isLoading: _isLoading,
+                        searchQuery: _searchQuery,
+                        sortOption: _sortOption,
+                        isAscending: _isAscending,
+                      ),
                     ],
                   ),
                 ),
@@ -282,7 +306,16 @@ class _HomePageState extends State<HomePage> {
 }
 
 class TopBar extends StatefulWidget {
-  const TopBar({super.key});
+  final Function(String)? onSearchChanged;
+  final Function(String)? onSortChanged;
+  final Function(bool)? onSortDirectionChanged;
+
+  const TopBar({
+    super.key,
+    this.onSearchChanged,
+    this.onSortChanged,
+    this.onSortDirectionChanged,
+  });
 
   @override
   State<TopBar> createState() => _TopBarState();
@@ -290,8 +323,16 @@ class TopBar extends StatefulWidget {
 
 class _TopBarState extends State<TopBar> {
   String _selectedSortOption = 'Date Connected';
+  bool _isAscending = true;
+  final TextEditingController _searchController = TextEditingController();
 
   final List<String> sortOptions = ['Date Connected', 'Username'];
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -306,6 +347,10 @@ class _TopBarState extends State<TopBar> {
             children: [
               // Search
               SearchBar(
+                controller: _searchController,
+                onChanged: (value) {
+                  widget.onSearchChanged?.call(value);
+                },
                 leading: const HugeIcon(
                   icon: HugeIcons.strokeRoundedSearch01,
                   color: Color(0xFF8A909A),
@@ -339,11 +384,11 @@ class _TopBarState extends State<TopBar> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.white,
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     const BoxShadow(
-                      color: Colors.black12,
+                      color: AppColors.black12,
                       blurRadius: 4,
                       offset: Offset(0, 2),
                     ),
@@ -374,40 +419,61 @@ class _TopBarState extends State<TopBar> {
                           _selectedSortOption = value;
                         }
                       });
+                      if (value != null) {
+                        widget.onSortChanged?.call(value);
+                      }
                     },
-                    style: const TextStyle(fontSize: 14, color: Colors.black87),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppColors.black87,
+                    ),
                     icon: const Icon(Icons.arrow_drop_down, size: 20),
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-              ),
-
-              // Sort Direction
+              ), // Sort Direction
               ToggleButtons(
                 borderRadius: BorderRadius.circular(8),
-                isSelected: const [true, false],
-                onPressed: (index) {},
+                isSelected: [_isAscending, !_isAscending],
+                onPressed: (index) {
+                  setState(() {
+                    _isAscending = index == 0;
+                  });
+                  widget.onSortDirectionChanged?.call(_isAscending);
+                },
                 color: AppColors.lightGrey,
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      color: AppColors.white,
+                      color: _isAscending ? AppColors.primary : AppColors.white,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10,
                       vertical: 10,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.arrow_upward,
                       size: 20,
-                      color: AppColors.primary,
+                      color: _isAscending ? AppColors.white : AppColors.grey,
                     ),
                   ),
-                  const Icon(
-                    Icons.arrow_downward,
-                    size: 20,
-                    color: AppColors.grey,
+                  Container(
+                    decoration: BoxDecoration(
+                      color: !_isAscending
+                          ? AppColors.primary
+                          : AppColors.white,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 10,
+                    ),
+                    child: Icon(
+                      Icons.arrow_downward,
+                      size: 20,
+                      color: !_isAscending ? AppColors.white : AppColors.grey,
+                    ),
                   ),
                 ],
               ),
@@ -467,7 +533,7 @@ class _TopBarState extends State<TopBar> {
                 label: const Text('Validate'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppColors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

@@ -100,7 +100,7 @@ class ErrorWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, size: 64, color: AppColors.error),
+            const Icon(Icons.error_outline, size: 64, color: AppColors.red),
             const SizedBox(height: 16),
             Text(title, style: AppTextStyles.h5, textAlign: TextAlign.center),
             if (subtitle != null) ...[

@@ -1,10 +1,3 @@
-/// Profile modal widget for displaying detailed profile information
-///
-/// This widget handles the modal popup that shows when a profile card
-/// is clicked, including navigation between profiles.
-///
-/// Follows clean architecture principles with DRY implementation
-/// using shared glassmorphism components.
 library;
 
 import 'package:flutter/material.dart';
@@ -12,8 +5,7 @@ import '../../../../core/models/profile_models.dart';
 import '../../../../shared/widgets/modal_widgets.dart';
 import 'profile_detail_view.dart';
 
-/// A modal dialog that displays detailed profile information
-/// with navigation capabilities between multiple profiles
+
 class ProfileModal extends StatefulWidget {
   final List<ProfileData> profiles;
   final int initialIndex;

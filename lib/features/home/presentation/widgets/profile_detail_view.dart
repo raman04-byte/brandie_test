@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/models/profile_models.dart';
+import '../../../../core/theme/app_colors.dart';
 
 /// A widget that displays detailed profile information in a consistent format
 class ProfileDetailView extends StatelessWidget {
@@ -28,9 +29,21 @@ class ProfileDetailView extends StatelessWidget {
           const SizedBox(height: AppConstants.defaultPadding),
           _buildDateInformation(),
           const SizedBox(height: AppConstants.largePadding * 1.5),
-          _buildPlatformConnectionSection(),
-          const SizedBox(height: AppConstants.largePadding * 1.5),
-          _buildModalActionButtons(context),
+          Container(
+            decoration: BoxDecoration(
+              color: AppColors.black,
+              borderRadius: BorderRadius.circular(
+                AppConstants.defaultBorderRadius,
+              ),
+            ),
+            child: Column(
+              children: [
+                _buildPlatformConnectionSection(),
+                const SizedBox(height: AppConstants.largePadding * 1.5),
+                _buildModalActionButtons(context),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -58,7 +71,7 @@ class ProfileDetailView extends StatelessWidget {
       style: const TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.w600,
-        color: Colors.black87,
+        color: AppColors.black87,
       ),
     );
   }
@@ -97,7 +110,7 @@ class ProfileDetailView extends StatelessWidget {
         const SizedBox(width: 6),
         const Text(
           'Birmingham, UK',
-          style: TextStyle(fontSize: 14, color: Colors.grey),
+          style: TextStyle(fontSize: 14, color: AppColors.grey),
         ),
       ],
     );
@@ -107,14 +120,14 @@ class ProfileDetailView extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: Colors.pink.shade100,
+        color: Colors.pink,
         borderRadius: BorderRadius.circular(12),
       ),
       child: const Text(
         '42',
         style: TextStyle(
           fontSize: 12,
-          color: Colors.pink,
+          color: AppColors.pink,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -136,7 +149,7 @@ class ProfileDetailView extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           'ID: ${profile.id}',
-          style: const TextStyle(fontSize: 12, color: Colors.grey),
+          style: const TextStyle(fontSize: 12, color: AppColors.grey),
         ),
       ],
     );
@@ -150,7 +163,7 @@ class ProfileDetailView extends StatelessWidget {
         SizedBox(width: 4),
         Text(
           '@sabrina_rk4',
-          style: TextStyle(fontSize: 12, color: Colors.grey),
+          style: TextStyle(fontSize: 12, color: AppColors.grey),
         ),
       ],
     );
@@ -160,11 +173,11 @@ class ProfileDetailView extends StatelessWidget {
     return const Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.email_outlined, color: Colors.grey, size: 16),
+        Icon(Icons.email_outlined, color: AppColors.grey, size: 16),
         SizedBox(width: 4),
         Text(
           'sabrina@gmail.com',
-          style: TextStyle(fontSize: 12, color: Colors.grey),
+          style: TextStyle(fontSize: 12, color: AppColors.grey),
         ),
       ],
     );
@@ -188,9 +201,9 @@ class ProfileDetailView extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 14, color: Colors.grey),
+        Icon(icon, size: 14, color: AppColors.grey),
         const SizedBox(width: 4),
-        Text(text, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+        Text(text, style: const TextStyle(fontSize: 12, color: AppColors.grey)),
       ],
     );
   }
@@ -206,7 +219,7 @@ class ProfileDetailView extends StatelessWidget {
         children: [
           const Text(
             'Trying to connect',
-            style: TextStyle(fontSize: 14, color: Colors.grey),
+            style: TextStyle(fontSize: 14, color: AppColors.grey),
           ),
           const SizedBox(height: AppConstants.smallPadding),
           Row(
@@ -219,7 +232,7 @@ class ProfileDetailView extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                  color: AppColors.black87,
                 ),
               ),
             ],
@@ -234,13 +247,13 @@ class ProfileDetailView extends StatelessWidget {
       case 'instagram':
         return const Icon(
           HugeIcons.strokeRoundedInstagram,
-          color: Color(0xFFE1306C),
+          color: AppColors.red,
           size: 16,
         );
       case 'tiktok':
         return const Icon(
           HugeIcons.strokeRoundedTiktok,
-          color: Colors.black,
+          color: AppColors.black,
           size: 16,
         );
       case 'facebook':
@@ -248,29 +261,29 @@ class ProfileDetailView extends StatelessWidget {
       case 'whatsapp':
         return const Icon(
           HugeIcons.strokeRoundedWhatsapp,
-          color: Color(0xFF25D366),
+          color: AppColors.green,
           size: 16,
         );
       case 'youtube':
         return const Icon(
           HugeIcons.strokeRoundedYoutube,
-          color: Color(0xFFFF0000),
+          color: AppColors.red,
           size: 16,
         );
       case 'twitter':
         return const Icon(
           HugeIcons.strokeRoundedNewTwitterRectangle,
-          color: Color(0xFF1DA1F2),
+          color: AppColors.blue,
           size: 16,
         );
       case 'linkedin':
         return const Icon(
           HugeIcons.strokeRoundedLinkedin02,
-          color: Color(0xFF0077B5),
+          color: AppColors.blue,
           size: 16,
         );
       default:
-        return const Icon(Icons.public, color: Colors.grey, size: 16);
+        return const Icon(Icons.public, color: AppColors.grey, size: 16);
     }
   }
 
@@ -281,7 +294,7 @@ class ProfileDetailView extends StatelessWidget {
           child: Container(
             height: 48,
             decoration: BoxDecoration(
-              color: const Color(0xFFFF4444),
+              color: AppColors.red,
               borderRadius: BorderRadius.circular(
                 AppConstants.smallBorderRadius,
               ),
@@ -291,11 +304,11 @@ class ProfileDetailView extends StatelessWidget {
                 Navigator.of(context).pop();
                 _handleDecline(context);
               },
-              icon: const Icon(Icons.close, color: Colors.white, size: 18),
+              icon: const Icon(Icons.close, color: AppColors.white, size: 18),
               label: const Text(
                 'Decline',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -308,7 +321,7 @@ class ProfileDetailView extends StatelessWidget {
           child: Container(
             height: 48,
             decoration: BoxDecoration(
-              color: const Color(0xFF4285F4),
+              color: AppColors.primary,
               borderRadius: BorderRadius.circular(
                 AppConstants.smallBorderRadius,
               ),
@@ -318,11 +331,11 @@ class ProfileDetailView extends StatelessWidget {
                 Navigator.of(context).pop();
                 _handleAccept(context);
               },
-              icon: const Icon(Icons.check, color: Colors.white, size: 18),
+              icon: const Icon(Icons.check, color: AppColors.white, size: 18),
               label: const Text(
                 'Approve',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -338,7 +351,7 @@ class ProfileDetailView extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('${profile.name} accepted'),
-        backgroundColor: Colors.green,
+        backgroundColor: AppColors.green,
       ),
     );
   }
@@ -347,7 +360,7 @@ class ProfileDetailView extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('${profile.name} declined'),
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.red,
       ),
     );
   }

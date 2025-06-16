@@ -60,7 +60,7 @@ class _HoverExpandableNavigationState extends State<HoverExpandableNavigation> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: AppColors.black.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(2, 0),
             ),

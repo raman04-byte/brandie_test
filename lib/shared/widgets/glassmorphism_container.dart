@@ -1,9 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/theme/app_colors.dart';
 
-/// A reusable glassmorphism container widget that provides a glass-like
-/// blur effect with customizable properties following the app's design system
 class GlassmorphismContainer extends StatelessWidget {
   final Widget child;
   final double? width;
@@ -47,7 +46,7 @@ class GlassmorphismContainer extends StatelessWidget {
             boxShadow ??
             [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
+                color: AppColors.black.withValues(alpha: 0.1),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -65,7 +64,7 @@ class GlassmorphismContainer extends StatelessWidget {
             ),
             child: onTap != null
                 ? Material(
-                    color: Colors.transparent,
+                    color: AppColors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(borderRadius),
                       onTap: onTap,
@@ -102,7 +101,7 @@ class GlassmorphismNavigationButton extends StatelessWidget {
       height: size,
       borderRadius: 15.0,
       onTap: onPressed,
-      child: Icon(icon, color: Colors.white, size: 28),
+      child: Icon(icon, color: AppColors.white, size: 28),
     );
   }
 }
