@@ -4,9 +4,11 @@
 /// is clicked, including navigation between profiles.
 library;
 
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
-
+import '../../../../core/constants/assets.dart';
 import '../../../../core/models/profile_models.dart';
 
 /// A modal dialog that displays detailed profile information
@@ -35,17 +37,52 @@ class _ProfileModalState extends State<ProfileModal> {
   }
 
   ProfileData get currentProfile => widget.profiles[currentIndex];
-
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: Colors.transparent,
+    final screenSize = MediaQuery.of(context).size;
+
+    return Material(
+      color: Colors.transparent,
       child: Stack(
-        alignment: Alignment.center,
         children: [
-          _buildLeftNavigationButton(),
-          _buildMainDialogContent(),
-          _buildRightNavigationButton(),
+          // Glassmorphism background
+          Positioned.fill(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.white.withValues(alpha: 0.15),
+                      Colors.white.withValues(alpha: 0.05),
+                      Colors.black.withValues(alpha: 0.05),
+                      Colors.black.withValues(alpha: 0.1),
+                    ],
+                    stops: const [0.0, 0.3, 0.7, 1.0],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          // Main content
+          Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Left navigation button
+                _buildLeftNavigationButton(),
+                const SizedBox(width: 40),
+                // Main dialog
+                _buildMainDialogContent(screenSize),
+                const SizedBox(width: 40),
+                // Right navigation button
+                _buildRightNavigationButton(),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -53,19 +90,45 @@ class _ProfileModalState extends State<ProfileModal> {
 
   /// Builds the left navigation button
   Widget _buildLeftNavigationButton() {
-    return Positioned(
-      left: 20,
-      child: Container(
-        width: 48,
-        height: 48,
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.9),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.shade300, width: 2),
+    return Container(
+      width: 56,
+      height: 56,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.3),
+          width: 1.5,
         ),
-        child: IconButton(
-          onPressed: _navigateLeft,
-          icon: const Icon(Icons.chevron_left, color: Colors.grey, size: 24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(15),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(15),
+                onTap: _navigateLeft,
+                child: const Icon(
+                  Icons.chevron_left,
+                  color: Colors.white,
+                  size: 28,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -73,59 +136,136 @@ class _ProfileModalState extends State<ProfileModal> {
 
   /// Builds the right navigation button
   Widget _buildRightNavigationButton() {
-    return Positioned(
-      right: 20,
-      child: Container(
-        width: 48,
-        height: 48,
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.9),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.shade300, width: 2),
+    return Container(
+      width: 56,
+      height: 56,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.3),
+          width: 1.5,
         ),
-        child: IconButton(
-          onPressed: _navigateRight,
-          icon: const Icon(Icons.chevron_right, color: Colors.grey, size: 24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(15),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(15),
+                onTap: _navigateRight,
+                child: const Icon(
+                  Icons.chevron_right,
+                  color: Colors.white,
+                  size: 28,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
 
   /// Builds the main dialog content
-  Widget _buildMainDialogContent() {
+  Widget _buildMainDialogContent(Size screenSize) {
+    // Calculate responsive size based on screen size
+    double dialogWidth = screenSize.width > 1200
+        ? 550
+        : screenSize.width > 800
+        ? 420
+        : screenSize.width * 0.9;
+
+    // Ensure the dialog doesn't get too tall on smaller screens
+    double maxHeight = screenSize.height * 0.85;
+
+    // Adjust padding for smaller screens
+    double horizontalPadding = screenSize.width > 600 ? 40 : 20;
+
     return Container(
-      width: 500,
+      width: dialogWidth,
+      height: maxHeight,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.2),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.15),
+            blurRadius: 30,
+            offset: const Offset(0, 10),
+          ),
+          BoxShadow(
+            color: Colors.white.withValues(alpha: 0.8),
+            blurRadius: 0,
+            offset: const Offset(0, 0),
+          ),
+        ],
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildCloseButton(),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(40, 0, 40, 40),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white.withValues(alpha: 0.9),
+                  Colors.white.withValues(alpha: 0.8),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(24),
+            ),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                _buildProfileAvatar(),
-                const SizedBox(height: 16),
-                _buildProfileName(),
-                const SizedBox(height: 16),
-                _buildProfileDetailsRow(),
-                const SizedBox(height: 16),
-                _buildDateInformation(),
-                const SizedBox(height: 24),
-                _buildPlatformConnectionSection(),
-                const SizedBox(height: 24),
-                if (currentProfile.stats.isNotEmpty) _buildModalStatsSection(),
-                const SizedBox(height: 24),
-                _buildProfileLinkButton(),
-                const SizedBox(height: 32),
-                _buildModalActionButtons(),
+                _buildCloseButton(),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.fromLTRB(
+                      horizontalPadding,
+                      0,
+                      horizontalPadding,
+                      horizontalPadding,
+                    ),
+                    child: Column(
+                      children: [
+                        _buildProfileAvatar(),
+                        const SizedBox(height: 24),
+                        _buildProfileName(),
+                        const SizedBox(height: 12),
+                        _buildProfileDetailsRow(),
+                        const SizedBox(height: 12),
+                        _buildDateInformation(),
+                        const SizedBox(height: 40),
+                        _buildPlatformConnectionSection(),
+                        const SizedBox(height: 40),
+                        _buildModalActionButtons(),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -135,10 +275,18 @@ class _ProfileModalState extends State<ProfileModal> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.close, color: Colors.grey),
-          padding: const EdgeInsets.all(16),
+        Container(
+          margin: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.close, color: Color(0xFF666666)),
+            iconSize: 20,
+            padding: const EdgeInsets.all(8),
+          ),
         ),
       ],
     );
@@ -147,15 +295,22 @@ class _ProfileModalState extends State<ProfileModal> {
   /// Builds the profile avatar
   Widget _buildProfileAvatar() {
     return Container(
-      width: 80,
-      height: 80,
+      width: 100,
+      height: 100,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.grey.shade300, width: 2),
+        border: Border.all(color: Colors.grey.shade300, width: 3),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: const CircleAvatar(
-        radius: 38,
-        backgroundImage: AssetImage('assets/images/logo.png'),
+        radius: 47,
+        backgroundImage: AssetImage(Assets.profile),
         backgroundColor: Color(0xFFF5F5F5),
       ),
     );
@@ -166,10 +321,11 @@ class _ProfileModalState extends State<ProfileModal> {
     return Text(
       currentProfile.name,
       style: const TextStyle(
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: FontWeight.w600,
-        color: Colors.black87,
+        color: Color(0xFF1a1a1a),
       ),
+      textAlign: TextAlign.center,
     );
   }
 
@@ -178,8 +334,8 @@ class _ProfileModalState extends State<ProfileModal> {
     return Wrap(
       alignment: WrapAlignment.center,
       crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: 12,
-      runSpacing: 8,
+      spacing: 20,
+      runSpacing: 12,
       children: [
         _buildLocationInfo(),
         _buildAgeIndicator(),
@@ -197,7 +353,7 @@ class _ProfileModalState extends State<ProfileModal> {
       children: [
         Container(
           width: 20,
-          height: 20,
+          height: 14,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(2),
             image: const DecorationImage(
@@ -206,10 +362,14 @@ class _ProfileModalState extends State<ProfileModal> {
             ),
           ),
         ),
-        const SizedBox(width: 6),
+        const SizedBox(width: 8),
         const Text(
           'Birmingham, UK',
-          style: TextStyle(fontSize: 14, color: Colors.grey),
+          style: TextStyle(
+            fontSize: 14,
+            color: Color(0xFF666666),
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ],
     );
@@ -218,17 +378,18 @@ class _ProfileModalState extends State<ProfileModal> {
   /// Builds age indicator
   Widget _buildAgeIndicator() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.pink.shade100,
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.pink.shade50,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.pink.shade200, width: 1),
       ),
-      child: const Text(
+      child: Text(
         '42',
         style: TextStyle(
-          fontSize: 12,
-          color: Colors.pink,
-          fontWeight: FontWeight.w500,
+          fontSize: 13,
+          color: Colors.pink.shade600,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
@@ -247,10 +408,14 @@ class _ProfileModalState extends State<ProfileModal> {
             shape: BoxShape.circle,
           ),
         ),
-        const SizedBox(width: 4),
+        const SizedBox(width: 6),
         Text(
           'ID: ${currentProfile.id}',
-          style: const TextStyle(fontSize: 12, color: Colors.grey),
+          style: const TextStyle(
+            fontSize: 14,
+            color: Color(0xFF666666),
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ],
     );
@@ -262,10 +427,14 @@ class _ProfileModalState extends State<ProfileModal> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(Icons.facebook, color: Color(0xFF1877F2), size: 16),
-        SizedBox(width: 4),
+        SizedBox(width: 6),
         Text(
           '@sabrina_rk4',
-          style: TextStyle(fontSize: 12, color: Colors.grey),
+          style: TextStyle(
+            fontSize: 14,
+            color: Color(0xFF666666),
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ],
     );
@@ -276,11 +445,15 @@ class _ProfileModalState extends State<ProfileModal> {
     return const Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.email_outlined, color: Colors.grey, size: 16),
-        SizedBox(width: 4),
+        Icon(Icons.email_outlined, color: Color(0xFF666666), size: 16),
+        SizedBox(width: 6),
         Text(
           'sabrina@gmail.com',
-          style: TextStyle(fontSize: 12, color: Colors.grey),
+          style: TextStyle(
+            fontSize: 14,
+            color: Color(0xFF666666),
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ],
     );
@@ -291,8 +464,8 @@ class _ProfileModalState extends State<ProfileModal> {
     return Wrap(
       alignment: WrapAlignment.center,
       crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: 16,
-      runSpacing: 8,
+      spacing: 30,
+      runSpacing: 12,
       children: [
         _buildDateItem(Icons.calendar_today_outlined, 'Joined: 17 Jun, 2021'),
         _buildDateItem(Icons.access_time, 'Last Seen: 17 Jun, 2021'),
@@ -306,45 +479,75 @@ class _ProfileModalState extends State<ProfileModal> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 14, color: Colors.grey),
-        const SizedBox(width: 4),
-        Text(text, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+        Icon(icon, size: 14, color: const Color(0xFF666666)),
+        const SizedBox(width: 6),
+        Text(
+          text,
+          style: const TextStyle(
+            fontSize: 13,
+            color: Color(0xFF666666),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ],
     );
   }
 
   /// Builds platform connection section
   Widget _buildPlatformConnectionSection() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FA),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          const Text(
-            'Trying to connect',
-            style: TextStyle(fontSize: 14, color: Colors.grey),
+    return Column(
+      children: [
+        const Text(
+          'Trying to connect',
+          style: TextStyle(
+            fontSize: 16,
+            color: Color(0xFF666666),
+            fontWeight: FontWeight.w500,
           ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+        ),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF8F9FA),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               _buildPlatformIcon(),
-              const SizedBox(width: 8),
+              const SizedBox(width: 12),
               Text(
                 currentProfile.platform,
                 style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
                   color: Colors.black87,
                 ),
               ),
             ],
           ),
-        ],
+        ),
+        const SizedBox(height: 24),
+        _buildProfileHandle(),
+        const SizedBox(height: 28),
+        if (currentProfile.stats.isNotEmpty) _buildModalStatsSection(),
+        const SizedBox(height: 20),
+        _buildProfileLinkButton(),
+      ],
+    );
+  }
+
+  /// Builds the profile handle display
+  Widget _buildProfileHandle() {
+    return Text(
+      currentProfile.handle,
+      style: const TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        color: Color(0xFF1a1a1a),
       ),
+      textAlign: TextAlign.center,
     );
   }
 
@@ -355,69 +558,50 @@ class _ProfileModalState extends State<ProfileModal> {
         return const Icon(
           HugeIcons.strokeRoundedInstagram,
           color: Color(0xFFE1306C),
-          size: 16,
+          size: 20,
         );
       case 'tiktok':
         return const Icon(
           HugeIcons.strokeRoundedTiktok,
           color: Colors.black,
-          size: 16,
+          size: 20,
         );
       case 'facebook':
-        return const Icon(Icons.facebook, color: Color(0xFF1877F2), size: 16);
+        return const Icon(Icons.facebook, color: Color(0xFF1877F2), size: 20);
       case 'whatsapp':
         return const Icon(
           HugeIcons.strokeRoundedWhatsapp,
           color: Color(0xFF25D366),
-          size: 16,
+          size: 20,
         );
       case 'youtube':
         return const Icon(
           HugeIcons.strokeRoundedYoutube,
           color: Color(0xFFFF0000),
-          size: 16,
+          size: 20,
         );
       case 'twitter':
         return const Icon(
           HugeIcons.strokeRoundedNewTwitterRectangle,
           color: Color(0xFF1DA1F2),
-          size: 16,
+          size: 20,
         );
       case 'linkedin':
         return const Icon(
           HugeIcons.strokeRoundedLinkedin02,
           color: Color(0xFF0077B5),
-          size: 16,
+          size: 20,
         );
       default:
-        return const Icon(Icons.public, color: Colors.grey, size: 16);
+        return const Icon(Icons.public, color: Colors.grey, size: 20);
     }
   }
 
   /// Builds modal stats section
   Widget _buildModalStatsSection() {
-    if (currentProfile.stats.length == 1) {
-      // Single stat (like WhatsApp)
-      return Column(
-        children: [
-          Text(
-            currentProfile.stats.first.value,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            currentProfile.stats.first.label,
-            style: const TextStyle(fontSize: 14, color: Colors.grey),
-          ),
-        ],
-      );
-    } else {
-      // Multiple stats
-      return Row(
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: currentProfile.stats.map((stat) {
           return Column(
@@ -425,42 +609,57 @@ class _ProfileModalState extends State<ProfileModal> {
               Text(
                 stat.value,
                 style: const TextStyle(
-                  fontSize: 24,
+                  fontSize: 18,
                   fontWeight: FontWeight.w700,
-                  color: Colors.black87,
+                  color: Color(0xFF1a1a1a),
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 6),
               Text(
                 stat.label,
-                style: const TextStyle(fontSize: 14, color: Colors.grey),
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Color(0xFF666666),
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           );
         }).toList(),
-      );
-    }
+      ),
+    );
   }
 
   /// Builds profile link button
   Widget _buildProfileLinkButton() {
     String linkText = 'Go to ${currentProfile.platform} profile';
-    if (currentProfile.platform.toLowerCase() == 'facebook') {
-      linkText = 'Go to Facebook URL';
+    if (currentProfile.platform.toLowerCase() == 'tiktok') {
+      linkText = 'Go to TikTok profile';
+    } else if (currentProfile.platform.toLowerCase() == 'whatsapp') {
+      linkText = 'Go to WhatsApp profile';
     }
 
-    return TextButton.icon(
-      onPressed: () {
-        // Handle profile link navigation
-      },
-      icon: const Icon(Icons.open_in_new, size: 16, color: Color(0xFF4285F4)),
-      label: Text(
-        linkText,
-        style: const TextStyle(
-          fontSize: 14,
-          color: Color(0xFF4285F4),
-          fontWeight: FontWeight.w500,
-        ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFF4285F4), width: 1.5),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.open_in_new, size: 18, color: Color(0xFF4285F4)),
+          const SizedBox(width: 10),
+          Text(
+            linkText,
+            style: const TextStyle(
+              fontSize: 16,
+              color: Color(0xFF4285F4),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -471,48 +670,86 @@ class _ProfileModalState extends State<ProfileModal> {
       children: [
         Expanded(
           child: Container(
-            height: 48,
+            height: 56,
             decoration: BoxDecoration(
-              color: const Color(0xFFFF4444),
-              borderRadius: BorderRadius.circular(8),
+              color: const Color(0xFFDC3545),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFDC3545).withValues(alpha: 0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-            child: TextButton.icon(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _handleDecline();
-              },
-              icon: const Icon(Icons.close, color: Colors.white, size: 18),
-              label: const Text(
-                'Decline',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _handleDecline();
+                },
+                child: const Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.close, color: Colors.white, size: 20),
+                      SizedBox(width: 10),
+                      Text(
+                        'Decline',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 20),
         Expanded(
           child: Container(
-            height: 48,
+            height: 56,
             decoration: BoxDecoration(
               color: const Color(0xFF4285F4),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF4285F4).withValues(alpha: 0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-            child: TextButton.icon(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _handleAccept();
-              },
-              icon: const Icon(Icons.check, color: Colors.white, size: 18),
-              label: const Text(
-                'Approve',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _handleAccept();
+                },
+                child: const Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.check, color: Colors.white, size: 20),
+                      SizedBox(width: 10),
+                      Text(
+                        'Approve',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

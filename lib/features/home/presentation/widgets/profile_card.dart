@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_auto_size_text/flutter_auto_size_text.dart';
 import 'package:hugeicons/hugeicons.dart';
 
+import '../../../../core/constants/assets.dart';
 import '../../../../core/models/profile_models.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/custom_card.dart';
@@ -73,7 +74,7 @@ class _ProfileCardState extends State<ProfileCard> {
           ),
           child: const CircleAvatar(
             radius: 24,
-            backgroundImage: AssetImage('assets/images/logo.png'),
+            backgroundImage: AssetImage(Assets.profile),
             backgroundColor: AppColors.lightGrey,
           ),
         ),
@@ -339,13 +340,31 @@ class _ProfileCardState extends State<ProfileCard> {
 
   /// Shows the profile modal dialog
   void _showProfileModal(BuildContext context, int initialIndex) {
-    showDialog(
+    showGeneralDialog(
       context: context,
       barrierDismissible: true,
-      builder: (BuildContext context) {
-        return ProfileModal(
-          profiles: widget.allProfiles,
-          initialIndex: initialIndex,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      pageBuilder:
+          (
+            BuildContext buildContext,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) {
+            return ProfileModal(
+              profiles: widget.allProfiles,
+              initialIndex: initialIndex,
+            );
+          },
+      transitionDuration: const Duration(milliseconds: 300),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: ScaleTransition(
+            scale: Tween<double>(begin: 0.8, end: 1.0).animate(
+              CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
+            ),
+            child: child,
+          ),
         );
       },
     );
