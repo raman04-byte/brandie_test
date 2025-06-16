@@ -389,22 +389,6 @@ class _ProfileModalState extends State<ProfileModal> {
 
   /// Builds age indicator
   Widget _buildAgeIndicator() {
-    // return Container(
-    //   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-    //   decoration: BoxDecoration(
-    //     color: AppColors.pink.shade50,
-    //     borderRadius: BorderRadius.circular(14),
-    //     border: Border.all(color: AppColors.pink.shade200, width: 1),
-    //   ),
-    //   child: Text(
-    //     '42',
-    //     style: TextStyle(
-    //       fontSize: 13,
-    //       color: AppColors.pink.shade600,
-    //       fontWeight: FontWeight.w600,
-    //     ),
-    //   ),
-    // );
     return const Row(
       mainAxisSize: MainAxisSize.min,
       children: [
